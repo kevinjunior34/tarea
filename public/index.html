@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Proveedores</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h1>Gestión de Proveedores</h1>
+
+<form id="formProveedor">
+  <input type="hidden" id="id_proveedor">
+  <input type="text" id="razonsocial" placeholder="Razón Social" required>
+  <input type="text" id="direccion" placeholder="Dirección" required>
+  <input type="text" id="telefono" placeholder="Teléfono" required>
+  <button type="submit">Guardar</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Razón Social</th>
+      <th>Dirección</th>
+      <th>Teléfono</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody id="tablaProveedores"></tbody>
+</table>
+
+<script>
+const API = "http://localhost:3000/proveedores";
+
+// 📌 Cargar datos
+async function cargarProveedores() {
+  const res = await fetch(API);
+  const data = await res.json();
+
+  const tabla = document.getElementById("tablaProveedores");
+  tabla.innerHTML = "";
+
+  data.forEach(p => {
+    tabla.innerHTML += `
+      <tr>
+        <td>${p.id_proveedor}</td>
+        <td>${p.razonsocial}</td>
+        <td>${p.direccion}</td>
+        <td>${p.telefono}</td>
+        <td>
+          <button class="btn-editar" onclick="editar(${p.id_proveedor}, '${p.razonsocial}', '${p.direccion}', '${p.telefono}')">Editar</button>
+          <button class="btn-eliminar" onclick="eliminar(${p.id_proveedor})">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// 📌 Guardar o actualizar
+document.getElementById("formProveedor").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById("id_proveedor").value;
+  const proveedor = {
+    razonsocial: document.getElementById("razonsocial").value,
+    direccion: document.getElementById("direccion").value,
+    telefono: document.getElementById("telefono").value
+  };
+
+  if (id) {
+    // UPDATE
+    await fetch(API + "/" + id, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(proveedor)
+    });
+  } else {
+    // CREATE
+    await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(proveedor)
+    });
+  }
+
+  limpiar();
+  cargarProveedores();
+});
+
+// 📌 Editar
+function editar(id, razonsocial, direccion, telefono) {
+  document.getElementById("id_proveedor").value = id;
+  document.getElementById("razonsocial").value = razonsocial;
+  document.getElementById("direccion").value = direccion;
+  document.getElementById("telefono").value = telefono;
+}
+
+// 📌 Eliminar
+async function eliminar(id) {
+  if (confirm("¿Eliminar proveedor?")) {
+    await fetch(API + "/" + id, { method: "DELETE" });
+    cargarProveedores();
+  }
+}
+
+// 📌 Limpiar formulario
+function limpiar() {
+  document.getElementById("formProveedor").reset();
+  document.getElementById("id_proveedor").value = "";
+}
+
+// 📌 Inicializar
+cargarProveedores();
+</script>
+
+</body>
+</html>

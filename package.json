@@ -1,0 +1,22 @@
+{
+  "name": "backend-js",
+  "version": "1.0.0",
+  "description": "backend con javascript",
+  "license": "MIT",
+  "author": "KEVIN",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "5.2.1",
+    "mysql2": "3.22.2"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.22"
+  }
+}
